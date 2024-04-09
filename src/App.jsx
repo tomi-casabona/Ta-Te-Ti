@@ -31,25 +31,26 @@ function App() {
     removeGameToStorage();
   };
 
-  const handleSquareClick = (index) =>{
+  const handleSquareClick = (index) => {
     //update board
-    const newBoard = updateBoard(board,index,turn,winner);
+    const newBoard = updateBoard(board, index, turn, winner);
     setBoard(newBoard);
     //update turn
     const newTurn = turn === TURNS.x ? TURNS.o : TURNS.x;
     //set board state
-     setTurn(newTurn);
+    setTurn(newTurn);
     //save game
-     saveGameToStorage({newBoard, newTurn});
-      // check if winner exists
-     const newWinner = checkWinner(newBoard);
-     if (newWinner) {
-       confetti();
-       setWinner(newWinner);
-     } else if (checkEndGame(newBoard)) {
+    saveGameToStorage({ newBoard, newTurn });
+    // check if winner exists
+    const newWinner = checkWinner(newBoard);
+    if (newWinner) {
+      confetti();
+      setWinner(newWinner);
+    } else if (checkEndGame(newBoard)) {
       //winner false = due to end game
-       setWinner(false);
-  }}
+      setWinner(false);
+    }
+  };
 
   return (
     <main className="board">
