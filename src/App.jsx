@@ -4,7 +4,7 @@ import { Board } from "./components/Board.jsx";
 import { Square } from "./components/Square.jsx";
 import { TURNS } from "./constants.js";
 import { saveGameToStorage, removeGameToStorage } from "./logic/storage.js";
-import { checkWinner, checkEndGame } from "./logic/board.js";
+import { checkWinner, checkEndGame, updateBoard } from "./logic/board.js";
 import { WinnerModal } from "./components/WinnerModal.jsx";
 import confetti from "canvas-confetti";
 
@@ -31,33 +31,25 @@ function App() {
     removeGameToStorage();
   };
 
-  // update the draw of the board.
-  const updateBoard = (index) => {
-    // if has a item inside, or if has a winner don't let us overwrite it
-    if (board[index] || winner) return;
-
-    // set the draw in a new board
-    const newBoard = [...board];
-    newBoard[index] = turn;
-    //update board state
+  const handleSquareClick = (index) =>{
+    //update board
+    const newBoard = updateBoard(board,index,turn,winner);
     setBoard(newBoard);
-
-    //change player turn
+    //update turn
     const newTurn = turn === TURNS.x ? TURNS.o : TURNS.x;
-    //update turn state
-    setTurn(newTurn);
-
-    //Save the game-board
-    saveGameToStorage({ newBoard, newTurn });
-    // check if winner exists
-    const newWinner = checkWinner(newBoard);
-    if (newWinner) {
-      confetti();
-      setWinner(newWinner);
-    } else if (checkEndGame(newBoard)) {
-      setWinner(false);
-    }
-  };
+    //set board state
+     setTurn(newTurn);
+    //save game
+     saveGameToStorage({newBoard, newTurn});
+      // check if winner exists
+     const newWinner = checkWinner(newBoard);
+     if (newWinner) {
+       confetti();
+       setWinner(newWinner);
+     } else if (checkEndGame(newBoard)) {
+      //winner false = due to end game
+       setWinner(false);
+  }}
 
   return (
     <main className="board">
@@ -65,7 +57,7 @@ function App() {
 
       <button onClick={resetGame}>Reset Game</button>
 
-      <Board board={board} updateBoard={updateBoard} />
+      <Board board={board} handleSquareClick={handleSquareClick} />
 
       <section className="turn">
         <Square isSelected={turn === TURNS.x}>{TURNS.x}</Square>
